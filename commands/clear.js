@@ -1,8 +1,11 @@
 const Discord = module.require("discord.js");
+const { GuildMember, Guild } = require("discord.js");
 const fs = require("fs");
 
 module.exports.run = async (client,message,args,prefix) => {
     let count = Number.parseInt(args[0]);
+    let roleA = '959790723400601600';
+    if (message.member.roles.cache.has(roleA)){
         if (!count || count > 100 || count <= 0){ 
             count = 0;
             if(count > 100) message.channel.send('Нельзя удалить больше 100 сообщений за раз');
@@ -23,7 +26,9 @@ module.exports.run = async (client,message,args,prefix) => {
                 })
                
             });
-            
+        } else {
+            message.channel.send('У вас нет прав для использования этой команды')
+        }       
 };
 
 module.exports.help = {
@@ -31,4 +36,3 @@ module.exports.help = {
     description: "Команда для удаления сообщений" 
 };
 
-//сделать вывод команды для  1 роли(моей)
