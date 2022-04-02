@@ -1,16 +1,24 @@
 const Discord = module.require("discord.js");
 const fs = require("fs")
+const { MessageEmbed } = require('discord.js');
 
 module.exports.run = async (client,message,args,prefix) => {
-let mb = message.mentions.members.first() || message.member; // Если есть упомянание человека в сообщении, то берём его, если нету, то себя. Расскажу чуть позже.
-let color = mb.displayHexColor; //Цвет самой высокой роли человека, если цвет невидимый то самой высокой отображаемой роли.
-let embed = new Discord.RichEmbed() //Создаём эмбед
-.setImage(mb.user.avatarURL) //Устанавливаем картинку - аватар человека.
-.setColor(color) //Цвет.
-.setFooter("Аватар пользователя " + mb.user.tag); //Устанавливаем в подпись чей это аватар.
-message.channel.send({embed}); //Отправляем.
+
+    const logChannel = client.channels.cache.get('957691844437889134') 
+    || client.channels.fetch('957691844437889134');
+
+    let mb = message.mentions.members.first() || message.member; 
+    let color = mb.displayHexColor; 
+    let embed = new Discord.MessageEmbed()
+    .setImage(mb.displayAvatarURL({dynamic: true ,  size: 4096})) 
+    .setColor(color) 
+    .setFooter("Аватар пользователя " + mb.user.tag);
+    
+    logChannel.send({ embeds: [embed] }); 
 }
 
 module.exports.help = {
-    name: "avatar"
+    name: "avatar",
+    description: "Команда для вывода авки пользователя"
+    
 };
