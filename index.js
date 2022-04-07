@@ -1,36 +1,37 @@
-require('dotenv').config()
-const Discord = require('discord.js')
+const {Client, Collection} = require('discord.js')
 const fs = require('fs')
-const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] })
+const mongoose = require('mongoose');
+const ready = require('./app/events/ready');
+const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES"] })
 const config = require('./config.json')
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-client.commands = new Discord.Collection() 
+client.commands = new Collection(); 
+client.events = new Collection();
+client.data = require('./app/db/db')
 
-fs.readdir('./commands', (err, files) => { // чтение файлов в папке commands
-    if (err) console.log(err)
 
-    let jsfile = files.filter(f => f.split('.').pop() === 'js') // файлы не имеющие расширение .js игнорируются
-    if (jsfile.length <= 0) return console.log('Команды не найдены!') // если нет ни одного файла с расширением .js
+const commandFiles = fs.readdirSync('./app/commands/').filter(f => f.endsWith('.js'))
+    for (const f of commandFiles) {
+        const command = require(`./app/commands/${f}`)
+        client.commands.set(command.name, command)
+    }
 
-    console.log(`Загружено ${jsfile.length} команд`)
-    jsfile.forEach((f, i) => { // добавляем каждый файл в коллекцию команд
-        let props = require(`./commands/${f}`)
-        client.commands.set(props.help.name, props)
-    })
+const eventFiles = fs.readdirSync('./app/events/').filter(f => f.endsWith('.js'))
+    for (const f of eventFiles) {
+        const event = require(`./app/events/${f}`)
+        const eventS = f.split(".")[0]
+        client.on(eventS, event.bind(null, client))
+    }
+
+mongoose.connect(config.mongoDB).then(async () => {
+    await console.log("База данных mongodb подключена");
+}).catch(async () => {
+    await console.log("нету подключения к mongodb")
 })
 
-client.on('ready', () => {
-    console.log(`Бот ${client.user.username} запустился`);
+client.login(config.token).then(async () => {
+    await console.log('Команды и ивенты успешно загрузились', ready)
+}).catch(async (err) => {
+    await console.log(`Нету команд для заргрузки: ${err}`);
 })
 
-client.on('message', message => {
-    let prefix = config.prefix
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
-    let messageArray = message.content.split(' ') // разделение пробелами
-    let command = messageArray[0] // команда после префикса
-    let args = messageArray.slice(1) // аргументы после команды
-
-    let command_file = client.commands.get(command.slice(prefix.length)) // получение команды из коллекции
-    if (command_file) command_file.run(client, message, args, prefix)
-})
-client.login(process.env.TOKEN);
