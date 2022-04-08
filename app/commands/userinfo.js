@@ -39,7 +39,7 @@ module.exports = {
                     inline: false
                 }]
             )
-            .setColor("#ff2474")
+            .setColor(config.color)
             .setFooter({text:`Используйте ${prefix}userinfo <user> что бы узнать о пользователе больше!` })
         return logChannel.send({ embeds: [embed]})
     }
