@@ -1,37 +1,55 @@
-const {Client, Collection} = require('discord.js')
-const fs = require('fs')
-const mongoose = require('mongoose');
-const ready = require('./app/events/ready');
-const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES"] })
-const config = require('./config.json')
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-client.commands = new Collection(); 
-client.events = new Collection();
-client.data = require('./app/db/db')
+const DiscordJS = require("discord.js"), fs = require("fs"), mongoose = require("mongoose")
 
-
-const commandFiles = fs.readdirSync('./app/commands/').filter(f => f.endsWith('.js'))
-    for (const f of commandFiles) {
-        const command = require(`./app/commands/${f}`)
-        client.commands.set(command.name, command)
+global.cfg = require(`./config`)
+global.client = new DiscordJS.Client({
+    partials: ['MESSAGE', 'CHANNEL', 'USER', `GUILD_MEMBER`, 'REACTION'],
+    intents: 32767,
+    allowedMentions: {
+        parse: [`users`, `roles`],
+        repliedUser: true
     }
+})
+client.commands = new DiscordJS.Collection()
+global.GuildModel = require(`./db/guildShm`)
+global.MemberModel = require(`./db/memberShm`)
+client.db = require('./db/db')
 
-const eventFiles = fs.readdirSync('./app/events/').filter(f => f.endsWith('.js'))
-    for (const f of eventFiles) {
-        const event = require(`./app/events/${f}`)
-        const eventS = f.split(".")[0]
-        client.on(eventS, event.bind(null, client))
-    }
+mongoose.connect(cfg.mongoDB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}).then(() => { console.log(`Соединение с базой данных установлено!`) }).catch((err) => { console.log(err) })
 
-mongoose.connect(config.mongoDB).then(async () => {
-    await console.log("База данных mongodb подключена");
-}).catch(async () => {
-    await console.log("нету подключения к mongodb")
+fs.readdir(`./commands`, (err, ff) => {
+    ff.filter(f => fs.lstatSync(`./commands/${f}`).isDirectory()).forEach(dir => {
+        fs.readdir(`./commands/${dir}`, (e, files) => {
+            if (e) throw e
+            if (files && files.length > 0) {
+                files.filter(g => g.endsWith(".js") && fs.lstatSync(`./commands/${dir}/${g}`).isFile()).forEach(file => {
+                    let props = require(`./commands/${dir}/${file}`)
+                    client.commands.set(file.split(".")[0], props)
+                })
+            }
+        })
+    })
 })
 
-client.login(config.token).then(async () => {
-    await console.log('Команды и ивенты успешно загрузились', ready)
-}).catch(async (err) => {
-    await console.log(`Нету команд для заргрузки: ${err}`);
+const SlashFiles = fs.readdirSync('./slash').filter(file => file.endsWith('.js'));
+for (const file of SlashFiles) {
+    const commandAny = require(`./slash/${file}`);
+    client.commands.any.push(commandAny);
+}
+
+fs.readdir(`./events`, (err, files) => {
+    files.forEach(file => {
+        const event = require(`./events/${file}`)
+        if (event.once) {
+            client.once(event.name, (...args) => event.execute(...args, client))
+        } else {
+            client.on(event.name, (...args) => event.execute(...args, client))
+        }
+    })
 })
 
+process.on('unhandledRejection', (reason) => { console.log(reason) })
+
+client.login(cfg.token)

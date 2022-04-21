@@ -1,5 +1,7 @@
 {
-    "token": "",
+    "token": "OTU3NjczOTQyOTA5MzQ5OTg5.YkCNXA.YValgEqGyqMSdeRk2J3K5qQatww",
     "prefix": "!",
-    "mongoDB": ""
+    "mongoDB": "mongodb://localhost/testbote",
+    "color": "#ff2474",
+    "tenor": "GDLLP95BBZ2Q"
 }
