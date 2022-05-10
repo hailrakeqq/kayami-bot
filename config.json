@@ -1,8 +1,8 @@
 {
-    "token": "OTU3NjczOTQyOTA5MzQ5OTg5.YkCNXA.TDyNfUryh5mafjFAkv0J3VTmCMY",
+    "token": "",
     "prefix": "!",
-    "mongoDB": "mongodb://127.0.0.1/kayamidb",
+    "mongoDB": "",
     "color": "#ff2474",
-    "tenor": "GDLLP95BBZ2Q",
-    "youtubeAPIKey": "AIzaSyBAuwTSfET6EQHMOUdyi7dtbL7zw_p2R4o"
+    "tenor": "",
+    "youtubeAPIKey": ""
 }
