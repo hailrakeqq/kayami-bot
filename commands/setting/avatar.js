@@ -1,6 +1,6 @@
 const Discord = module.require("discord.js");
 const fs = require("fs")
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, Guild } = require('discord.js');
 module.exports = {
     name: "avatar",
     desc: "Команда для вывода авки пользователя",

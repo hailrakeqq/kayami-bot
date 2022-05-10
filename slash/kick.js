@@ -1,45 +1,29 @@
+const { MessageEmbed } = require("discord.js");
+const { Permissions } = require('discord.js');
 module.exports = {
-    name: "kick",
-    description: "кик пользователя",
-    use: "kick <@user>",
-    userPermissions: ["KICK_MEMBERS"],
-    category: "Модерация",
-    aliases: [],
-    options: [
-        {
-            name: "target",
-            description: "target to kick",
-            type: "USER",
-            required: true
-        },
-        {
-            name: "reason",
-            description: "reason to kick",
-            type: "STRING",
-            required: false
-        }
-    ],
-
-    async execute(client, interaction, args, data) {
+    userPermissions: "KICK_MEMBERS",
+    async execute(interaction) {
         const target = interaction.options.getMember("target");
         const reason = interaction.options.getString("reason") || "No reason provided";
-        //const modRole = '963703818745446470'
-        if (target.hasPermission(['KICK_MEMBERS', 'BAN_MEMBERS', 'ADMINISTRATOR']))
-            return interaction.reply({
-                content: "Ты не можешь выгнать этого пользователя"
-            });
-        await target.send(
-            `Тебя выгнали из сервере ${interaction.guild.name}, причина: ${reason}`
-        );
+
+        const tEmbed = new MessageEmbed()
+            .setColor('GREEN')
+            .setTitle(`Пользователя ${target.user.tag} выгнали, причина: \`${reason}\``)
+
+        const fEmbed = new MessageEmbed()
+            .setColor('RED')
+            .setTitle(`Ты не можешь выгнать этого пользователя`)
+        if (!target.kickable) await interaction.reply({ embeds: [fEmbed] })
+        if (target.permissions.has([Permissions.FLAGS.KICK_MEMBERS, Permissions.FLAGS.BAN_MEMBERS, Permissions.FLAGS.ADMINISTRATOR]))
+            return interaction.reply({ embeds: [fEmbed] });
+        await target.send(`Тебя выгнали из сервере ${interaction.guild.name}, причина: \`${reason}\``).catch(console.error)
 
         target.kick({ reason })
 
-        interaction.reply({
-            content: `Пользователя ${target.user.tag} выгнали, причина: ${reason}`
-        })
-    },
-    admin: false
+        interaction.reply({ embeds: [tEmbed] })
+    }
 }
+
 module.exports.interaction = {
     name: "kick",
     description: "кик пользователя",
@@ -49,13 +33,13 @@ module.exports.interaction = {
     options: [
         {
             name: "target",
-            description: "target to kick",
+            description: "Укажите пользователя которого хотите выгнать",
             type: "USER",
             required: true
         },
         {
             name: "reason",
-            description: "reason to kick",
+            description: "Причина кика",
             type: "STRING",
             required: false
         }

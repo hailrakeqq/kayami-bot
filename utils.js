@@ -1,13 +1,14 @@
-const DiscordJS = require('discord.js')
-const config = require('./config.json')
-const { MessageEmbed } = require("discord.js");
 module.exports.embed = embed
 module.exports.rolechecker = RoleChecker
-module.exports.translit = translit
 module.exports.splitnum = SplitNumber
 module.exports.toHHMMSS = ToHHMMSS
 module.exports.nowDate = nowDate
 module.exports.fetchCmdList = fetchCmdList
+const { createAudioResource, createAudioPlayer, getVoiceConnection, joinVoiceChannel, AudioPlayerStatus } = require('@discordjs/voice');
+const DiscordJS = require('discord.js')
+const config = require('./config.json')
+const { MessageEmbed } = require("discord.js");
+const { QUEUE_LIMIT, } = require("./config.json");
 
 async function fetchCmdList(message, client, args) {
     let embed = new MessageEmbed()
@@ -68,11 +69,6 @@ function RoleChecker(member, user, list) {
     }
 }
 
-function translit(str) {
-    let Chars = { 'а': 'a', 'е': 'e', 'у': 'y', 'о': 'o', 'р': 'p', 'с': 'c', 'х': 'x' }
-    for (let i in Chars) { str = str.replace(new RegExp(i, 'g'), Chars[i]) }
-    return str
-}
 function SplitNumber(x) {
     var parts = x.toString().split(".");
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");

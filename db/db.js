@@ -11,10 +11,10 @@ module.exports.getMember = async (member) => {
 }
 
 module.exports.getGuild = async (guild) => {
-    let guildDB = await guildsDB.findOne({ guild: guild.id })
+    let guildDB = await guildsDB.findOne({ id: guild.id })
     if (guildDB) return guildDB
     else {
-        await guildsDB.create({ guild: guild.id })
-        return await guildsDB.findOne({ guild: guild.id })
+        await guildsDB.create({ id: guild.id })
+        return await guildsDB.findOne({ id: guild.id })
     }
 }

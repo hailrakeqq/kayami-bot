@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const { fetchCmdList } = require('../../utils')
+const { fetchCmdList } = require('../../utils');
 const cfg = require("../../config.json")
 module.exports = {
     name: "help",
