@@ -4,18 +4,23 @@ const config = require('../../config.json')
 
 module.exports = {
     name: "raccoon",
-    desc: "Команда для вывода енотиков",
+    desc: "Рандомные енотики",
     use: "raccoon",
     category: ":cat: Животные",
     aliases: [],
 
-    async execute(client, message, args, data) {
+    async execute(message, client, args) {
 
         let res = await fetch('https://some-random-api.ml/img/raccoon/')
             .then(res => res.json()).then(json => {
                 const embed = new MessageEmbed()
                     .setColor(config.color)
-                    .setTitle(`${message.guild.name}, енотики :)`)
+                    .addFields([
+                        {
+                            name: `Команда: ${this.desc}`,
+                            value: `${message.guild.name}, енотики :)`,
+                            inline: false
+                        }])
                     .setImage(json.link)
                     .setFooter({ text: `Используйте ${config.prefix}raccoon что бы посмотреть на енотиков ^-^` })
                 message.channel.send({ embeds: [embed] });

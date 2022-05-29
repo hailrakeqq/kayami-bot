@@ -1,8 +1,7 @@
 {
-    "token": "",
+    "token": "OTU3NjczOTQyOTA5MzQ5OTg5.GQFia7.xiuFVf6iPvkKhLuLDzlkVvCVKcf1wTGxyYV5oY",
     "prefix": "!",
-    "mongoDB": "",
+    "mongoDB": "mongodb+srv://Psiblade:Patron1337@kayamidb.viyrg.mongodb.net/test",
     "color": "#ff2474",
-    "tenor": "",
-    "youtubeAPIKey": ""
+    "tenor": "GDLLP95BBZ2Q"
 }

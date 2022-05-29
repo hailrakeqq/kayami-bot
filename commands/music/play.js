@@ -1,7 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 module.exports = {
     name: "play",
-    desc: "Воспроизведение музыки в голсовом канале",
+    desc: "Воспроизведение музыки из YouTube, Spotify, Soundcloud в голосовом канале",
     use: "play <url> или текст",
     category: ":musical_note:  Музыка",
     aliases: [],

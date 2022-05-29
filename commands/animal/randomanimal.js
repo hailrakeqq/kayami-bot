@@ -4,12 +4,12 @@ const config = require('../../config.json')
 
 module.exports = {
     name: "randanimal",
-    desc: "рандомные животные",
+    desc: "Рандомные животные",
     use: "randanimal",
     category: ":cat: Животные",
     aliases: [],
 
-    async execute(client, message, args, data) {
+    async execute(message, client, args) {
         const url = `https://g.tenor.com/v1/random?q=animal&key=${config.tenor}`
         const response = await fetch(url)
             .then(async response => {
@@ -18,9 +18,14 @@ module.exports = {
                 const gif = await result.results[index].media[0].gif.url
                 const embed = new MessageEmbed()
                     .setColor(config.color)
-                    .setTitle(`${message.guild.name}, тваринки :)`)
+                    .addFields([
+                        {
+                            name: `Команда: ${this.desc}`,
+                            value: `${message.guild.name}, тваринки :)`,
+                            inline: false
+                        }])
                     .setImage(gif)
-                    .setFooter({ text: `Используйте ${config.prefix}rAnimal что бы посмотреть на рандомных животных! ^-^` })
+                    .setFooter({ text: `Используйте ${config.prefix}randanimal что бы посмотреть на рандомных животных! ^-^` })
 
                 message.channel.send({ embeds: [embed] });
             })

@@ -2,6 +2,7 @@ const DiscordJS = require("discord.js"), fs = require("fs"), mongoose = require(
 const { DisTube } = require("distube")
 const { MessageEmbed } = require("discord.js");
 const { SoundCloudPlugin } = require('@distube/soundcloud')
+const { SpotifyPlugin } = require("@distube/spotify")
 global.cfg = require(`./config`)
 global.client = new DiscordJS.Client({
     partials: ['MESSAGE', 'CHANNEL', 'USER', `GUILD_MEMBER`, 'REACTION'],
@@ -41,6 +42,7 @@ fs.readdir(`./commands`, (err, ff) => {
     })
 })
 
+
 fs.readdir(`./events`, (err, files) => {
     files.forEach(file => {
         const event = require(`./events/${file}`)
@@ -58,7 +60,15 @@ let addListEmbed = new MessageEmbed().setColor("PURPLE")
 let emptyQueueEmbed = new MessageEmbed().setColor(`#8f40ff`)
 
 global.distube = new DisTube(client, {
-    plugins: [new SoundCloudPlugin()],
+    plugins: [new SoundCloudPlugin(),
+    new SpotifyPlugin({
+        parallel: true,
+        emitEventsAfterFetching: false,
+        api: {
+            clientId: "9c4c04d2aeed49b6b2c6b2bfa610c36d",
+            clientSecret: "a67aa6364ca04536acf3560c7bf4ee75",
+        },
+    })],
     searchSongs: 5,
     searchCooldown: 30,
     leaveOnEmpty: false,
@@ -99,7 +109,6 @@ global.distube = new DisTube(client, {
     })
     )
 
-
+client.on('interactioncreate', (interaction) => require(`./events/interactioncreate`)(client, interaction))
 process.on('unhandledRejection', (reason) => { console.log(reason) })
-client.on('interactionCreate', (interaction) => require('./events/interactioncreate')(interaction))
 client.login(cfg.token)

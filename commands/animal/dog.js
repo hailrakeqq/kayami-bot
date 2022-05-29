@@ -5,18 +5,24 @@ const { admin } = require("./cat");
 
 module.exports = {
     name: "dogs",
-    desc: "Команда для вывода собачек^_^",
+    desc: "Рандомные собачки ",
     use: "dogs",
     category: ":cat: Животные",
     aliases: [],
 
-    async execute(client, message, args, data) {
+    async execute(message, client, args) {
 
         let res = await fetch('https://some-random-api.ml/img/dog/')
             .then(res => res.json()).then(json => {
                 const embed = new MessageEmbed()
                     .setColor(config.color)
-                    .setTitle(`${message.guild.name}, собачки :)`)
+                    .addFields([
+                        {
+                            name: `Команда: ${this.desc}`,
+                            value: `${message.guild.name}, собачки :)`,
+                            inline: false
+                        }])
+
                     .setImage(json.link)
                     .setFooter({ text: `Используйте ${config.prefix}dogs что бы посмотреть на собачек ^_^` })
                 message.channel.send({ embeds: [embed] });

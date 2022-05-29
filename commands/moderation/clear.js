@@ -5,18 +5,19 @@ module.exports = {
     desc: "Команда для удаления сообщений",
     use: "clear [count]",
     category: ":shield: Модерация",
+    userPermissions: "MANAGE_MESSAGES",
     aliases: [],
 
     async execute(message, client, args) {
-        const error1 = new MessageEmbed()
-            .setColor("RED")
-            .setDescription(`Ты не имеешь прав что бы использовать эту команду`)
-        if (!message.member.permissions.has([Permissions.FLAGS.MANAGE_MESSAGES])) return message.reply({ embeds: [error1] })
-            .then(async (sent) => {
-                setTimeout(() => {
-                    sent.delete()
-                }, 3000)
-            })
+        // const error1 = new MessageEmbed()
+        //     .setColor("RED")
+        //     .setDescription(`Ты не имеешь прав что бы использовать эту команду`)
+        // if (!message.member.permissions.has([Permissions.FLAGS.MANAGE_MESSAGES])) return message.reply({ embeds: [error1] })
+        //     .then(async (sent) => {
+        //         setTimeout(() => {
+        //             sent.delete()
+        //         }, 3000)
+        //     })
 
 
         let count = Number.parseInt(args[0])
