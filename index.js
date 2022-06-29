@@ -4,6 +4,7 @@ const { MessageEmbed } = require("discord.js");
 const { SoundCloudPlugin } = require('@distube/soundcloud')
 const { SpotifyPlugin } = require("@distube/spotify")
 global.cfg = require(`./config`)
+require('dotenv').config()
 global.client = new DiscordJS.Client({
     partials: ['MESSAGE', 'CHANNEL', 'USER', `GUILD_MEMBER`, 'REACTION'],
     intents: 32767,
@@ -21,7 +22,7 @@ global.GuildModel = require(`./db/guildShm`)
 global.MemberModel = require(`./db/memberShm`)
 client.db = require('./db/db')
 
-mongoose.connect(cfg.mongoDB, {
+mongoose.connect(process.env.DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }).then(() => { console.log(`Соединение с базой данных установлено!`) }).catch((err) => { console.log(err) })
@@ -111,4 +112,4 @@ global.distube = new DisTube(client, {
 
 client.on('interactioncreate', (interaction) => require(`./events/interactioncreate`)(client, interaction))
 process.on('unhandledRejection', (reason) => { console.log(reason) })
-client.login(cfg.token)
+client.login(process.env.BOT_TOKEN)
