@@ -1,7 +1,7 @@
 {
-    "token": "OTU3NjczOTQyOTA5MzQ5OTg5.GQFia7.xiuFVf6iPvkKhLuLDzlkVvCVKcf1wTGxyYV5oY",
+    "token": "",
     "prefix": "!",
-    "mongoDB": "mongodb+srv://Psiblade:Patron1337@kayamidb.viyrg.mongodb.net/test",
+    "mongoDB": "",
     "color": "#ff2474",
-    "tenor": "GDLLP95BBZ2Q"
+    "tenor": ""
 }
