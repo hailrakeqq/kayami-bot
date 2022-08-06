@@ -72,10 +72,31 @@ global.distube = new DisTube(client, {
     })],
     searchSongs: 5,
     searchCooldown: 30,
-    leaveOnEmpty: false,
-    leaveOnFinish: false,
+    leaveOnEmpty: true,
+    leaveOnFinish: true,
     leaveOnStop: false,
 })
+    .on("searchResult", (message, result) => {
+        let i = 0
+        message.channel.send({
+            embeds: [addListEmbed
+                .setColor("#7289DA").setTitle(`** Выберите что проигровать, со списка ниже **`)
+                .setDescription((`${result
+                    .map(song => `**${++i}**. ${song.name} - \`${song.formattedDuration}\``)
+                    .join("\n")}\n*Введите что то другое или подождите 60 секунд для отмены*`))
+            ]
+        })
+    })
+
+    .on("searchCancel", message => message.channel.send(`${client.emotes.error} | Поиск отменен`))
+
+    .on("searchInvalidAnswer", message =>
+        message.channel.send(
+            `${client.emotes.error} | Неверный ответ! Вы должны ввести число в диапазоне результатов`
+        )
+    )
+    .on("searchDone", () => { })
+
     .on('playSong', (queue, song) =>
         queue.textChannel?.send({
             embeds: [PlayEmbed.setColor("PURPLE").setTitle("Музыка")
@@ -83,8 +104,8 @@ global.distube = new DisTube(client, {
                 .setThumbnail(song.thumbnail)]
         }),
     )
-    .on('addSong', (queue, song) =>
 
+    .on('addSong', (queue, song) =>
         queue.textChannel?.send({
             embeds: [AddEmbed.setTitle(`:white_check_mark: Добавлена новая песня в очередь`)
                 .setDescription(`**[${song.name}](${song.url})** - \`${song.formattedDuration}\``)
@@ -93,6 +114,7 @@ global.distube = new DisTube(client, {
             ]
         })
     )
+
     .on('addList', (queue, playlist) =>
         queue.textChannel?.send({
             embeds: [addListEmbed
@@ -102,6 +124,29 @@ global.distube = new DisTube(client, {
             ]
         })
     )
+
+    .on('error', (channel, e) => {
+        if (channel) channel.send({
+            embeds: [addListEmbed
+                .setColor("RED").setTitle(`:x: Ошибка `)
+                .setDescription((`Произошла ошибка: ${e}`))
+                .setFooter({ text: `Ошибка может значить что вы не выбрали что проигровать или ввели недопустимое значение. Попробуйте заново!` })
+            ]
+        })
+        else console.error(e)
+    })
+
+    .on('empty', channel => channel.send('Голосовой канал пуст! Отключаюсь...'))
+
+    .on('searchNoResult', (message, query) =>
+        message.channel.send({
+            embeds: [addListEmbed
+                .setColor("RED").setTitle(`:x: Ошибка `)
+                .setDescription(`${client.emotes.error} | Нету результатов для \`${query}\`!`)
+            ]
+        })
+    )
+
     .on('finish', queue => queue.textChannel?.send({
         embeds: [emptyQueueEmbed.setTitle("Очередь закончилась")
             .setDescription(`Чтобы добавить что то в очередь используйте \n\`play <url> или текст\``)
