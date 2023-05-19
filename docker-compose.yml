@@ -1,0 +1,19 @@
+version: '3'
+services:
+  mongodb:
+    build:
+      context: ./db # Путь к папке с Dockerfile для MongoDB
+      dockerfile: Dockerfile
+    ports:
+      - 27018:27018
+    volumes:
+      - ./db/data:/data/db # Монтируем том для хранения данных MongoDB
+
+  nodejs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb
