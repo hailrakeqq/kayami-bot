@@ -1,7 +1,4 @@
 {
-    "token": "",
-    "prefix": "!",
-    "mongoDB": "",
-    "color": "#ff2474",
-    "tenor": ""
+  "prefix": "!",
+  "color": "#ff2474"
 }
