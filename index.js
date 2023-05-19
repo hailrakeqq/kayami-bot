@@ -1,10 +1,13 @@
 const DiscordJS = require("discord.js"), fs = require("fs"), mongoose = require("mongoose")
+const { Client, Intents } = require("discord.js");
 const { DisTube } = require("distube")
 const { MessageEmbed } = require("discord.js");
 const { SoundCloudPlugin } = require('@distube/soundcloud')
 const { SpotifyPlugin } = require("@distube/spotify")
+
 global.cfg = require(`./config`)
 require('dotenv').config()
+
 global.client = new DiscordJS.Client({
     partials: ['MESSAGE', 'CHANNEL', 'USER', `GUILD_MEMBER`, 'REACTION'],
     intents: 32767,
@@ -13,6 +16,7 @@ global.client = new DiscordJS.Client({
         repliedUser: true
     }
 })
+
 
 client.commands = new DiscordJS.Collection()
 client.commands.any = []
@@ -157,4 +161,5 @@ global.distube = new DisTube(client, {
 
 client.on('interactioncreate', (interaction) => require(`./events/interactioncreate`)(client, interaction))
 process.on('unhandledRejection', (reason) => { console.log(reason) })
+
 client.login(process.env.BOT_TOKEN)
