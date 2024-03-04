@@ -17,7 +17,6 @@ global.client = new DiscordJS.Client({
     }
 })
 
-
 client.commands = new DiscordJS.Collection()
 client.commands.any = []
 client.queue = new Map();
